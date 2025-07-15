@@ -21,6 +21,7 @@ Route::prefix('/blogs')->name('blog.')->group(function () {
     Route::get('/show/{id}', [BlogController::class, 'show'])->name('show');
     Route::put('/update/{blog}', [BlogController::class, 'update'])->name('update');
     Route::delete('/delete/{id}', [BlogController::class, 'softDelete'])->name('softDelete');
+    Route::delete('/delete/{id}',[BlogController::class,'destroy'])->name('destroy');
 });
 
 Route::prefix('/categories')->name('categories.')->group(function () {

@@ -18,7 +18,7 @@ class BlogController extends Controller
         return response([
             'status' => __('errors.success'),
             'message' => __('errors.this_blog_list'),
-            'dat' => [
+            'data' => [
                 $list
             ]
 
@@ -68,6 +68,12 @@ class BlogController extends Controller
     public function show($id)
     {
         $blog = Blog::with('category', 'tags')->find($id);
+        if (!$blog) {
+            return response()->json([
+                'status' => __('errors.error'),
+                'message' => __('errors.blog_not_found')
+            ], 404);
+        }
         $blog->increment('views');
         return response()->json([
             'status' => __('errors.success'),
@@ -100,7 +106,9 @@ class BlogController extends Controller
         $validatedData = $validator->validated();
 
         if ($request->hasFile('image')) {
+        if ($blog->image && Storage::exists('public/' . $blog->image)) {
             Storage::delete('public/' . $blog->image);
+        }
             $path = $request->file('image')->store('blog', 'public');
             $validatedData['image'] = $path;
         }
@@ -121,13 +129,54 @@ class BlogController extends Controller
     public function softDelete($id)
     {
         $blog = Blog::find($id);
+
+         if (!$blog) {
+            return response()->json([
+                'status' => __('errors.error'),
+                'message' => __('errors.blog_not_found')
+            ], 404);
+        }
         $blog->tags()->detach();
-        Storage::delete('public/' . $blog->image);
+        
+        if ($blog->image && Storage::exists('public/' . $blog->image)) {
+            Storage::delete('public/' . $blog->image);
+        }
         $blog->delete();
         return response()->json([
             'status' => __('errors.success'),
             'message' => __('errors.blog_soft-deleted_successfully')
         ]);
     }
+
+    public function destroy($id)
+{
+    $blog = Blog::withTrashed()->find($id);
+
+    if (!$blog) {
+        return response()->json([
+            'status' => __('errors.error'),
+            'message' => __('errors.blog_not_found')
+        ], 404);
+    }
+
+    if (!$blog->trashed()) {
+        return response()->json([
+            'status' => __('errors.error'),
+            'message' => __('errors.blog_must_be_soft_deleted_first')
+        ], 400);
+    }
+
+    if ($blog->image && Storage::exists('public/' . $blog->image)) {
+        Storage::delete('public/' . $blog->image);
+    }
+
+    $blog->forceDelete();
+
+    return response()->json([
+        'status' => __('errors.success'),
+        'message' => __('errors.blog_permanently_deleted_successfully')
+    ]);
+}
+
 
 }

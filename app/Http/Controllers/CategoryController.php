@@ -72,7 +72,7 @@ class CategoryController extends Controller
             return response()->json([
                 'status' => __('errors.error'),
                 'message' => __('errors.validation_failed'),
-                'dat' => $validator->errors()
+                'data' => $validator->errors()
             ], 422);
         }
         $validatedData = $validator->validated();

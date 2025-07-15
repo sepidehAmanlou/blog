@@ -32,7 +32,7 @@ class TagController extends Controller
                 'status' => __('errors.error'),
                 'message' => __('errors.validation_failed'),
                 'data' => $validator->errors()
-            ]);
+            ],422);
         }
         $validatedData = $validator->validated();
         $tag = Tag::create($validatedData);
@@ -42,12 +42,18 @@ class TagController extends Controller
             'data' => [
                 $tag
             ]
-        ]);
+        ],201);
     }
 
     public function show($id)
     {
         $tag = Tag::with('blogs')->find($id);
+         if (!$tag) {
+            return response()->json([
+                'status'  => __('errors.error'),
+                'message' => __('errors.tag_not_found')
+            ], 404);
+        }
         return response()->json([
             'status' => __('errors.success'),
             'message' => __('errors.data_processed_successfully'),
@@ -90,6 +96,12 @@ class TagController extends Controller
     public function destroy($id)
     {
         $tag = Tag::find($id);
+          if (!$tag) {
+            return response()->json([
+                'status'  => __('errors.error'),
+                'message' => __('errors.tag_not_found')
+            ], 404);
+        }
         $tag->blogs()->detach();
         $tag->delete();
         return response()->json([
