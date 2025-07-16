@@ -20,7 +20,8 @@ Route::prefix('/blogs')->name('blog.')->group(function () {
     Route::post('/store', [BlogController::class, 'store'])->name('store');
     Route::get('/show/{id}', [BlogController::class, 'show'])->name('show');
     Route::put('/update/{blog}', [BlogController::class, 'update'])->name('update');
-    Route::delete('/delete/{id}', [BlogController::class, 'softDelete'])->name('softDelete');
+    Route::delete('/soft_delete/{id}', [BlogController::class, 'softDelete'])->name('softDelete');
+    Route::patch('/restore/{id}', [BlogController::class, 'restore'])->name('restore');
     Route::delete('/delete/{id}',[BlogController::class,'destroy'])->name('destroy');
 });
 

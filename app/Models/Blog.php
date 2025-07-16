@@ -20,7 +20,7 @@ class Blog extends Model
     ];
 
      use SoftDeletes;
-    protected $datas = ['deleted_at'];
+  protected $dates = ['deleted_at'];
 
     public function category()
     {

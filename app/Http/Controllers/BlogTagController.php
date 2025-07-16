@@ -26,7 +26,7 @@ class BlogTagController extends Controller
                 'status' => __('errors.error'),
                 'message' => __('errors.validation_failed'),
                 'data' => $validator->errors()
-            ]);
+            ],422);
         }
         $validatedData = $validator->validated();
         $blog = Blog::find($validatedData['blog_id']);
@@ -34,7 +34,7 @@ class BlogTagController extends Controller
         return response()->json([
             'status' => __('errors.success'),
             'message' => __('errors.tag_attached_successfully')
-        ]);
+        ],200);
 
 
     }
@@ -54,7 +54,7 @@ class BlogTagController extends Controller
                 'status' => __('errors.error'),
                 'message' => __('errors.validation_failed'),
                 'data' => $validator->errors()
-            ]);
+            ],422);
         }
 
         $validatedData = $validator->validated();

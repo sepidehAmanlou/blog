@@ -148,6 +148,35 @@ class BlogController extends Controller
         ]);
     }
 
+    public function restore($id)
+{
+    $blog = Blog::withTrashed()->find($id);
+
+    if (!$blog) {
+        return response()->json([
+            'status' => __('errors.error'),
+            'message' => __('errors.blog_not_found')
+        ], 404);
+    }
+
+    if (!$blog->trashed()) {
+        return response()->json([
+            'status' => __('errors.error'),
+            'message' => __('errors.blog_is_not_soft_deleted')
+        ], 400);
+    }
+
+    $blog->restore();
+
+    return response()->json([
+        'status' => __('errors.success'),
+        'message' => __('errors.blog_restored_successfully'),
+        'data' => [
+            $blog
+        ]
+    ]);
+}
+
     public function destroy($id)
 {
     $blog = Blog::withTrashed()->find($id);
